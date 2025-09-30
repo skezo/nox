@@ -26,6 +26,7 @@ export const ELEMENT_IDS = {
   subdomainsCheckbox: 'subdomains-checkbox',
   addDomainForm: 'add-domain-form',
   useCurrentBtn: 'use-current-btn',
+  clearPreviewBtn: 'clear-preview-btn',
   domainsList: 'domains-list'
 } as const;
 

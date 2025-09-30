@@ -83,6 +83,12 @@ input[type='range'] {
   font-weight: 400;
 }
 
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
 /* Buttons */
 button {
   padding-block: var(--spacing-sm);
@@ -93,7 +99,7 @@ button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 button:focus {
@@ -102,7 +108,7 @@ button:focus {
 }
 
 .primary-btn {
-  inline-size: 100%;
+  flex: 1;
   background-color: var(--accent-color);
   color: white;
   font-weight: 600;
@@ -116,13 +122,22 @@ button:focus {
   background-color: var(--surface-elevated);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  margin-block-start: var(--spacing-sm);
-  inline-size: 100%;
 }
 
 .secondary-btn:hover {
   background-color: var(--surface-hover);
   border-color: var(--border-color);
+}
+
+/* Use Current button */
+#use-current-btn {
+  margin-block-start: var(--spacing-sm);
+  inline-size: 100%;
+}
+
+/* Clear Preview button */
+#clear-preview-btn {
+  flex: 1;
 }
 
 /* Domain List */

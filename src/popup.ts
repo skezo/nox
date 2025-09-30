@@ -26,6 +26,7 @@ const invertRange = document.getElementById(ELEMENT_IDS.invertRange) as HTMLInpu
 const subdomainsCheckbox = document.getElementById(ELEMENT_IDS.subdomainsCheckbox) as HTMLInputElement;
 const addDomainForm = document.getElementById(ELEMENT_IDS.addDomainForm) as HTMLFormElement;
 const useCurrentBtn = document.getElementById(ELEMENT_IDS.useCurrentBtn) as HTMLButtonElement;
+const clearPreviewBtn = document.getElementById(ELEMENT_IDS.clearPreviewBtn) as HTMLButtonElement;
 const domainsList = document.getElementById(ELEMENT_IDS.domainsList) as HTMLDivElement;
 
 // Sync form inputs and enable live preview
@@ -65,6 +66,23 @@ useCurrentBtn.addEventListener('click', async () => {
       console.error('Invalid URL:', error);
     }
   }
+});
+
+// Clear preview and reset form
+clearPreviewBtn.addEventListener('click', async () => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab.id) {
+    // Refresh tab to restore original state
+    await chrome.tabs.sendMessage(tab.id, { action: 'refresh' }).catch(() => {
+      // Ignore errors if content script not ready
+    });
+  }
+
+  // Reset form to defaults
+  domainInput.value = '';
+  invertInput.value = String(DEFAULT_INVERT_VALUE);
+  invertRange.value = String(DEFAULT_INVERT_VALUE);
+  subdomainsCheckbox.checked = false;
 });
 
 // Load and display domains
