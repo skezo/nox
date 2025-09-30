@@ -1,0 +1,64 @@
+body {
+  inline-size: 400px;
+  block-size: 600px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--background);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-block: var(--spacing-lg);
+  padding-inline: var(--spacing-lg);
+  border-block-end: 1px solid var(--border-color);
+  background-color: var(--surface);
+}
+
+h1 {
+  margin: 0;
+  line-height: 0;
+}
+
+.logo {
+  inline-size: 40px;
+  block-size: 40px;
+  display: block;
+  border-radius: 1e5px;
+  background-color: var(--background);
+  padding: var(--spacing-sm);
+}
+
+h2 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-block-end: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding-block: var(--spacing-lg);
+  padding-inline: var(--spacing-lg);
+}
+
+/* WCAG 2.1 AA compliance */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

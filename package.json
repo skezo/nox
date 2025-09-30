@@ -1,0 +1,27 @@
+{
+  "name": "nox",
+  "version": "1.0.0",
+  "description": "A lightweight extension to dim the web",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:skezo/nox.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm run clean && tsc && pnpm run copy-assets",
+    "copy-assets": "cp manifest.json dist/ && cp -r public/* dist/",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet.\" && exit 0",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@types/chrome": "^0.1.14",
+    "husky": "^9.1.7",
+    "typescript": "^5.9.2"
+  }
+}

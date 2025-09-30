@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# AI assistant folders and docs
+.claude/
+.agents/
+.cursor/
+.windsurf/
+.aider/
+.copilot/
+*.ai.md
+*-ai.md
+AI_*.md
+
+# OS files
+.DS_Store
+Thumbs.db

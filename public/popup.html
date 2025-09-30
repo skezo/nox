@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nox</title>
+  <link rel="stylesheet" href="styles/global.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>
+        <img src="assets/icons/nox-icon.svg" alt="Nox" class="logo">
+      </h1>
+    </header>
+
+    <main>
+      <section class="add-domain-section">
+        <h2>Add Domain</h2>
+        <form id="add-domain-form">
+          <div class="form-group">
+            <label for="domain-input">Domain:</label>
+            <input
+              type="text"
+              id="domain-input"
+              name="domain"
+              placeholder="example.com"
+              aria-required="true"
+              required
+            >
+            <button type="button" id="use-current-btn" class="secondary-btn">Use Current</button>
+          </div>
+
+          <div class="form-group">
+            <label for="invert-input">Invert Value:</label>
+            <div class="range-input-group">
+              <input
+                type="range"
+                id="invert-range"
+                name="invertRange"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.88"
+                aria-label="Invert value slider"
+              >
+              <input
+                type="number"
+                id="invert-input"
+                name="invert"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.88"
+                aria-label="Invert value number input"
+              >
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input
+              type="checkbox"
+              id="subdomains-checkbox"
+              name="includeSubdomains"
+            >
+            <label for="subdomains-checkbox">Include subdomains</label>
+          </div>
+
+          <button type="submit" class="primary-btn">Add Domain</button>
+        </form>
+      </section>
+
+      <section class="domains-section">
+        <h2>Managed Domains</h2>
+        <div id="domains-list" class="domains-list" role="list">
+          <p class="empty-state">No domains added yet</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
