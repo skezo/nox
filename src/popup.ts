@@ -1,4 +1,4 @@
-import { DomainConfig } from './types.js';
+import { DomainConfig, Mode } from './types.js';
 import {
   getDomains,
   addOrUpdateDomain,
@@ -11,6 +11,7 @@ import {
   createButton,
   createRangeInputGroup,
   createCheckboxGroup,
+  createTextareaGroup,
   syncInputs
 } from './utils/dom.js';
 import {
@@ -21,9 +22,12 @@ import {
 
 // Get DOM elements
 const domainInput = document.getElementById(ELEMENT_IDS.domainInput) as HTMLInputElement;
+const modeSelect = document.getElementById('mode-select') as HTMLSelectElement;
+const invertGroup = document.getElementById('invert-group') as HTMLDivElement;
 const invertInput = document.getElementById(ELEMENT_IDS.invertInput) as HTMLInputElement;
 const invertRange = document.getElementById(ELEMENT_IDS.invertRange) as HTMLInputElement;
 const subdomainsCheckbox = document.getElementById(ELEMENT_IDS.subdomainsCheckbox) as HTMLInputElement;
+const customSelectorsInput = document.getElementById(ELEMENT_IDS.customSelectorsInput) as HTMLTextAreaElement;
 const addDomainForm = document.getElementById(ELEMENT_IDS.addDomainForm) as HTMLFormElement;
 const useCurrentBtn = document.getElementById(ELEMENT_IDS.useCurrentBtn) as HTMLButtonElement;
 const clearPreviewBtn = document.getElementById(ELEMENT_IDS.clearPreviewBtn) as HTMLButtonElement;
@@ -32,17 +36,42 @@ const domainsList = document.getElementById(ELEMENT_IDS.domainsList) as HTMLDivE
 // Sync form inputs and enable live preview
 syncInputs(invertRange, invertInput);
 
-// Live preview as user adjusts invert value
+// Toggle invert controls based on mode
+function updateInvertVisibility(): void {
+  const mode = modeSelect.value as Mode;
+  invertGroup.style.display = mode === 'filter' ? 'block' : 'none';
+}
+
+modeSelect.addEventListener('change', () => {
+  updateInvertVisibility();
+  enableLivePreview();
+});
+
+updateInvertVisibility();
+
+// Parse custom selectors from textarea
+function parseCustomSelectors(input: string): string[] {
+  return input
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+}
+
+// Live preview as user adjusts settings
 let previewTimeout: number;
 const enableLivePreview = () => {
   clearTimeout(previewTimeout);
   previewTimeout = window.setTimeout(async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab.id) {
+      const mode = modeSelect.value as Mode;
       const invertValue = parseFloat(invertInput.value);
+      const customSelectors = parseCustomSelectors(customSelectorsInput.value);
       await chrome.tabs.sendMessage(tab.id, {
         action: 'preview',
-        invertValue
+        mode,
+        invertValue,
+        customSelectors
       }).catch(() => {
         // Ignore errors if content script not ready
       });
@@ -52,6 +81,7 @@ const enableLivePreview = () => {
 
 invertRange.addEventListener('input', enableLivePreview);
 invertInput.addEventListener('input', enableLivePreview);
+customSelectorsInput.addEventListener('input', enableLivePreview);
 
 // Get current tab domain
 useCurrentBtn.addEventListener('click', async () => {
@@ -80,9 +110,12 @@ clearPreviewBtn.addEventListener('click', async () => {
 
   // Reset form to defaults
   domainInput.value = '';
+  modeSelect.value = 'smart';
   invertInput.value = String(DEFAULT_INVERT_VALUE);
   invertRange.value = String(DEFAULT_INVERT_VALUE);
   subdomainsCheckbox.checked = false;
+  customSelectorsInput.value = '';
+  updateInvertVisibility();
 });
 
 // Load and display domains
@@ -129,9 +162,21 @@ function createDomainInfo(config: DomainConfig): HTMLElement {
 
   const domainName = createElement('h3', { textContent: config.domain });
 
+  const mode = config.mode || 'smart';
+  const metaParts = [`Mode: ${mode}`];
+
+  if (mode === 'filter') {
+    metaParts.push(`Invert: ${config.invertValue ?? 0.88}`);
+  }
+
+  if (config.includeSubdomains) metaParts.push('Includes subdomains');
+  if (config.customSelectors && config.customSelectors.length > 0) {
+    metaParts.push(`${config.customSelectors.length} custom selector${config.customSelectors.length > 1 ? 's' : ''}`);
+  }
+
   const domainMeta = createElement('p', {
     className: CSS_CLASSES.domainMeta,
-    textContent: `Invert: ${config.invertValue}${config.includeSubdomains ? ' • Includes subdomains' : ''}`
+    textContent: metaParts.join(' • ')
   });
 
   domainInfo.appendChild(domainName);
@@ -183,7 +228,7 @@ function createEditSection(config: DomainConfig, index: number): HTMLElement {
 
   // Range input group
   const { container: rangeGroup } = createRangeInputGroup({
-    value: config.invertValue,
+    value: config.invertValue ?? DEFAULT_INVERT_VALUE,
     ariaLabelPrefix: `Invert value for ${config.domain}`,
     onChange: async (value) => {
       await updateDomain(index, { invertValue: value });
@@ -203,9 +248,24 @@ function createEditSection(config: DomainConfig, index: number): HTMLElement {
     }
   });
 
+  // Custom selectors textarea
+  const customSelectorsGroup = createTextareaGroup({
+    id: `custom-selectors-${index}`,
+    label: 'Custom Selectors:',
+    value: config.customSelectors?.join(', ') || '',
+    placeholder: 'e.g., .video-player, #banner',
+    helpText: 'Comma-separated CSS selectors to preserve',
+    onChange: async (selectors) => {
+      await updateDomain(index, { customSelectors: selectors.length > 0 ? selectors : undefined });
+      await refreshCurrentTab();
+      await loadDomains();
+    }
+  });
+
   editSection.appendChild(rangeLabel);
   editSection.appendChild(rangeGroup);
   editSection.appendChild(subdomainsGroup);
+  editSection.appendChild(customSelectorsGroup);
 
   return editSection;
 }
@@ -225,26 +285,35 @@ addDomainForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const domain = domainInput.value.trim().toLowerCase();
+  const mode = modeSelect.value as Mode;
   const invertValue = parseFloat(invertInput.value);
   const includeSubdomains = subdomainsCheckbox.checked;
+  const customSelectors = parseCustomSelectors(customSelectorsInput.value);
 
   if (!domain) return;
 
-  await addOrUpdateDomain({
+  const newConfig: DomainConfig = {
     domain,
-    invertValue,
+    enabled: true,
     includeSubdomains,
-    enabled: true
-  });
+    mode,
+    ...(mode === 'filter' && { invertValue }),
+    ...(customSelectors.length > 0 && { customSelectors })
+  };
+
+  await addOrUpdateDomain(newConfig);
 
   // Refresh current tab immediately
   await refreshCurrentTab();
 
   // Reset form
   domainInput.value = '';
+  modeSelect.value = 'smart';
   invertInput.value = String(DEFAULT_INVERT_VALUE);
   invertRange.value = String(DEFAULT_INVERT_VALUE);
   subdomainsCheckbox.checked = false;
+  customSelectorsInput.value = '';
+  updateInvertVisibility();
 
   await loadDomains();
 });

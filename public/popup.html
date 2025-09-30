@@ -32,6 +32,15 @@
           </div>
 
           <div class="form-group">
+            <label for="mode-select">Mode:</label>
+            <select id="mode-select" name="mode" aria-label="Dark mode type">
+              <option value="smart" selected>Smart (OKLCH)</option>
+              <option value="filter">Filter (Fallback)</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+
+          <div class="form-group filter-only" id="invert-group">
             <label for="invert-input">Invert Value:</label>
             <div class="range-input-group">
               <input
@@ -66,6 +75,18 @@
             <label for="subdomains-checkbox">Include subdomains</label>
           </div>
 
+          <div class="form-group">
+            <label for="custom-selectors-input">Custom Selectors (optional):</label>
+            <textarea
+              id="custom-selectors-input"
+              name="customSelectors"
+              placeholder="e.g., .video-player, #banner"
+              rows="2"
+              aria-label="Custom CSS selectors to preserve"
+            ></textarea>
+            <small class="form-help">Comma-separated CSS selectors to preserve original colors</small>
+          </div>
+
           <div class="form-actions">
             <button type="submit" class="primary-btn">Add Domain</button>
             <button type="button" id="clear-preview-btn" class="secondary-btn">Clear Preview</button>
@@ -82,6 +103,6 @@
     </main>
   </div>
 
-  <script type="module" src="popup.js"></script>
+  <script type="module" src="/src/popup.ts"></script>
 </body>
 </html>

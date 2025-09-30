@@ -18,3 +18,7 @@ AI_*.md
 # OS files
 .DS_Store
 Thumbs.db
+
+# Misc.
+docs/
+

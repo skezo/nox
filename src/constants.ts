@@ -24,6 +24,7 @@ export const ELEMENT_IDS = {
   invertInput: 'invert-input',
   invertRange: 'invert-range',
   subdomainsCheckbox: 'subdomains-checkbox',
+  customSelectorsInput: 'custom-selectors-input',
   addDomainForm: 'add-domain-form',
   useCurrentBtn: 'use-current-btn',
   clearPreviewBtn: 'clear-preview-btn',

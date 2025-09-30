@@ -32,10 +32,29 @@
 
 ## Development
 
-- **Build once**: `pnpm build`
-- **Watch mode**: `pnpm watch`
-- **Clean build**: `pnpm clean`
-- **Type check**: `pnpm typecheck`
+- **Dev mode (HMR)**: `pnpm dev` - Auto-reloads on file changes
+- **Build**: `pnpm build` - Production build with Vite
+- **Type check**: `pnpm typecheck` - Validate TypeScript types
+
+### Project Structure
+
+```
+.
+├── public/              # Static assets and manifest
+│   ├── manifest.json    # Extension manifest (V3)
+│   ├── popup.html       # Popup UI
+│   ├── assets/          # Icons and images
+│   └── styles/          # CSS files
+├── src/                 # TypeScript source
+│   ├── content.ts       # Content script (injected into pages)
+│   ├── background.ts    # Service worker
+│   ├── popup.ts         # Popup UI logic
+│   ├── types.ts         # Shared interfaces
+│   ├── constants.ts     # Configuration constants
+│   └── utils/           # Utility modules
+├── docs/                # Architecture documentation
+└── dist/                # Build output (git-ignored)
+```
 
 ## Usage
 

@@ -128,3 +128,50 @@ export function createCheckboxGroup(config: {
 
   return container;
 }
+
+export function createTextareaGroup(config: {
+  id: string;
+  label: string;
+  value: string;
+  placeholder?: string;
+  helpText?: string;
+  onChange: (value: string[]) => void;
+}): HTMLDivElement {
+  const container = createElement('div', { className: 'form-group' });
+
+  const label = createElement('label', {
+    textContent: config.label,
+    attributes: { for: config.id },
+    className: 'edit-label'
+  });
+
+  const textarea = createElement('textarea', {
+    id: config.id,
+    attributes: {
+      placeholder: config.placeholder || '',
+      rows: '2'
+    }
+  }) as HTMLTextAreaElement;
+  textarea.value = config.value;
+
+  textarea.addEventListener('change', () => {
+    const selectors = textarea.value
+      .split(',')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+    config.onChange(selectors);
+  });
+
+  container.appendChild(label);
+  container.appendChild(textarea);
+
+  if (config.helpText) {
+    const help = createElement('small', {
+      textContent: config.helpText,
+      className: 'form-help'
+    });
+    container.appendChild(help);
+  }
+
+  return container;
+}

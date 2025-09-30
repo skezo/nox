@@ -22,7 +22,9 @@ label {
 }
 
 input[type='text'],
-input[type='number'] {
+input[type='number'],
+select,
+textarea {
   inline-size: 100%;
   padding-block: var(--spacing-sm);
   padding-inline: var(--spacing-md);
@@ -33,20 +35,47 @@ input[type='number'] {
   background-color: var(--surface);
   color: var(--text-primary);
   transition: border-color 0.2s, background-color 0.2s;
+  resize: vertical;
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F1F3F5' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  padding-inline-end: calc(var(--spacing-md) * 2);
 }
 
 input[type='text']:hover,
-input[type='number']:hover {
+input[type='number']:hover,
+select:hover,
+textarea:hover {
   background-color: var(--surface-elevated);
   border-color: var(--border-color);
+}
+
+.form-help {
+  display: block;
+  margin-block-start: var(--spacing-xs);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  line-height: 1.4;
 }
 
 input[type='text']:focus,
 input[type='number']:focus,
 input[type='range']:focus,
-input[type='checkbox']:focus {
+input[type='checkbox']:focus,
+select:focus,
+textarea:focus {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
+}
+
+/* Filter-only controls (hidden when mode !== 'filter') */
+.filter-only {
+  display: none;
 }
 
 .range-input-group {

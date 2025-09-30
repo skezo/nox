@@ -1,0 +1,30 @@
+/* Phase 0: Anti-Flash CSS
+ * Injected at document_start to prevent white flash
+ * Must be lightweight (<2KB) and have no dependencies
+ */
+
+html.nox-dark {
+  /* Define CSS custom properties for dark mode */
+  --nox-bg: oklch(0.17 0 0);
+  --nox-surface: oklch(0.22 0 0);
+  --nox-text: oklch(0.92 0 0);
+
+  color-scheme: dark;
+  background: var(--nox-bg);
+  color: var(--nox-text);
+}
+
+/* Disable transitions during boot to prevent flicker */
+html.nox-boot * {
+  transition: none !important;
+}
+
+/* Optional: Global filter fallback if smart mode fails or for CSP-blocked sites */
+html.nox-filter {
+  filter: invert(var(--nox-invert, 1)) hue-rotate(var(--nox-hue, 180deg));
+}
+
+/* Preserve media elements in filter mode */
+html.nox-filter :is(img, picture, video, canvas, svg) {
+  filter: invert(var(--nox-invert, 1)) hue-rotate(var(--nox-hue, 180deg));
+}
